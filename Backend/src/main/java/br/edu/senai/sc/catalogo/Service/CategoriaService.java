@@ -47,8 +47,15 @@ public class CategoriaService {
 	}
 
 	public Long contarCategorias() {
-		return null;
-	}
+        try {
+            // Funcionalidade:
+            // Utiliza o método count do categoriaRepository para obter o número total de categorias.
+            return categoriaRepository.count();
+        } catch (Exception exception) {
+            // Se ocorrer uma exceção, retorna 0.
+            return 0L;
+        }
+    }
 }
 
 

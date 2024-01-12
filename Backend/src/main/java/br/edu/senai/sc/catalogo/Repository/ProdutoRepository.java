@@ -11,11 +11,12 @@ import br.edu.senai.sc.catalogo.entities.Produto;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
-	List<Produto> findProdutoByNomeContaining(String nome);
+    List<Produto> findProdutoByNomeContaining(String nome);
 
-	@Query("SELECT p FROM Produto p WHERE p.preco >= 1000.0")
-	List<Produto> listarProdutosPrecoMaiorOuIgual1000();
+    // Método atualizado para usar a sintaxe correta do Spring Data JPA para consultas personalizadas
+    List<Produto> findByPrecoGreaterThanOrEqual(Double preco);
 
-	@Query("SELECT COUNT(p) FROM Produto p WHERE p.preco >= 1000.0")
-	Long contarProdutosPrecoMaiorOuIgual1000();
+    // Método atualizado para usar a sintaxe correta do Spring Data JPA para consultas personalizadas
+    @Query("SELECT COUNT(p) FROM Produto p WHERE p.preco >= 1000.0")
+    Long countByPrecoGreaterThanOrEqual();
 }

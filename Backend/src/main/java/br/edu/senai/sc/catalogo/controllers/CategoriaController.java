@@ -44,17 +44,20 @@ public class CategoriaController {
 		}
 	}
 
-	// contar categoria
-	@ApiOperation(value = "Contar o número de categorias")
-	@GetMapping("/contarCategorias")
-	public ResponseEntity<Long> contarCategorias() {
-		try {
-			Long count = categoriaService.contarCategorias();
-			return new ResponseEntity<>(count, HttpStatus.OK);
-		} catch (Exception exception) {
-			return new ResponseEntity<>(0L, HttpStatus.BAD_REQUEST);
-		}
-	}
+	// Contagem de Categorias
+    @ApiOperation(value = "Contar o número de categorias")
+    @GetMapping("/contarCategorias")
+    public ResponseEntity<Long> contarCategorias() {
+        try {
+            // Funcionalidade:
+            // Utiliza o método contarCategorias do categoriaService para obter o número total de categorias.
+            Long count = categoriaService.contarCategorias();
+            return new ResponseEntity<>(count, HttpStatus.OK);
+        } catch (Exception exception) {
+            // Se ocorrer uma exceção, retorna 0 com status BAD_REQUEST.
+            return new ResponseEntity<>(0L, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 	@ApiOperation(value = "Cadastrar categoria")
 	@PostMapping
@@ -136,28 +139,32 @@ public class CategoriaController {
 		return new ResponseEntity<>("Categoria alterada com sucesso!", HttpStatus.OK);
 	}
 
-	//
 	@ApiOperation(value = "Criar categoria Padaria e cadastrar produtos")
-	@PostMapping("/criarCategoriaPadaria")
-	public ResponseEntity<String> criarCategoriaPadaria() {
-		try {
-			Categoria padaria = new Categoria();
-			padaria.setNome("Padaria");
-			categoriaService.salvarCategoria(padaria);
+    @PostMapping("/criarCategoriaPadaria")
+    public ResponseEntity<String> criarCategoriaPadaria() {
+        try {
+            // Funcionalidade:
+            // Cria uma nova categoria "Padaria" e a salva utilizando o método salvarCategoria do categoriaService.
+            Categoria padaria = new Categoria();
+            padaria.setNome("Padaria");
+            categoriaService.salvarCategoria(padaria);
 
-			Produto p1 = new Produto(null, "Pão Francês", "Pão tradicional francês", 2.5, 100L, padaria);
-			Produto p2 = new Produto(null, "Bolo de Chocolate", "Bolo delicioso de chocolate", 15.0, 50L, padaria);
+            // Cria dois novos produtos associados à categoria "Padaria" e os salva utilizando o método salvarProduto do produtoService.
+            Produto p1 = new Produto(null, "Pão Francês", "Pão tradicional francês", 2.5, 100L, padaria);
+            Produto p2 = new Produto(null, "Bolo de Chocolate", "Bolo delicioso de chocolate", 15.0, 50L, padaria);
 
-			produtoService.salvarProduto(p1);
-			produtoService.salvarProduto(p2);
+            produtoService.salvarProduto(p1);
+            produtoService.salvarProduto(p2);
 
-			return new ResponseEntity<>("Categoria Padaria criada e produtos cadastrados com sucesso!",
-					HttpStatus.CREATED);
-		} catch (Exception exception) {
-			return new ResponseEntity<>("Erro ao criar categoria Padaria e cadastrar produtos.",
-					HttpStatus.BAD_REQUEST);
-		}
-	}
+            // Se bem-sucedido, retorna uma mensagem de sucesso com status CREATED.
+            return new ResponseEntity<>("Categoria Padaria criada e produtos cadastrados com sucesso!",
+                    HttpStatus.CREATED);
+        } catch (Exception exception) {
+            // Se ocorrer uma exceção, retorna uma mensagem de erro com status BAD_REQUEST.
+            return new ResponseEntity<>("Erro ao criar categoria Padaria e cadastrar produtos.",
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
 
 	@ApiOperation(value = "Listar produtos da categoria Padaria")
 	@GetMapping("/produtosCategoriaPadaria")

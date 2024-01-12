@@ -15,140 +15,149 @@ import br.edu.senai.sc.catalogo.entities.Produto;
 @Service
 public class ProdutoService {
 
-	private final ProdutoRepository produtoRepository;
-	private final CategoriaRepository categoriaRepository;
-	private final ImagemRepository imagemRepository;
+    private final ProdutoRepository produtoRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final ImagemRepository imagemRepository;
 
-	public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository,
-			ImagemRepository imagemRepository) {
-		this.produtoRepository = produtoRepository;
-		this.categoriaRepository = categoriaRepository;
-		this.imagemRepository = imagemRepository;
-	}
+    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository,
+            ImagemRepository imagemRepository) {
+        this.produtoRepository = produtoRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.imagemRepository = imagemRepository;
+    }
 
-	public Produto salvarProduto(Produto produto) {
-		produtoRepository.save(produto);
-		return produto;
-	}
+    public Produto salvarProduto(Produto produto) {
+        produtoRepository.save(produto);
+        return produto;
+    }
 
-	public List<Produto> buscarProdutos() {
-		return produtoRepository.findAll();
-	}
+    public List<Produto> buscarProdutos() {
+        return produtoRepository.findAll();
+    }
 
-	public Optional<Produto> buscarProdutoPorCodigo(Long codigo) {
-		return produtoRepository.findById(codigo);
-	}
+    public Optional<Produto> buscarProdutoPorCodigo(Long codigo) {
+        return produtoRepository.findById(codigo);
+    }
 
-	public List<Produto> buscarProdutoPorNome(String nome) {
-		return produtoRepository.findProdutoByNomeContaining(nome);
-	}
+    public List<Produto> buscarProdutoPorNome(String nome) {
+        return produtoRepository.findProdutoByNomeContaining(nome);
+    }
 
-	public void excluirProduto(Long codigo) {
-		Optional<Produto> optionalProduto = buscarProdutoPorCodigo(codigo);
+    public void excluirProduto(Long codigo) {
+        Optional<Produto> optionalProduto = buscarProdutoPorCodigo(codigo);
 
-		if (optionalProduto.isPresent()) {
-			Produto produto = optionalProduto.get();
+        if (optionalProduto.isPresent()) {
+            Produto produto = optionalProduto.get();
 
-			if (produto.getCategoria() != null) {
-				removeCategoria(produto);
-			}
+            if (produto.getCategoria() != null) {
+                removeCategoria(produto);
+            }
 
-			if (!"Sem imagem".equals(produto.getIdImagem())) {
-				removeImagem(produto);
-			}
+            if (!"Sem imagem".equals(produto.getIdImagem())) {
+                removeImagem(produto);
+            }
 
-			produtoRepository.deleteById(codigo);
-		}
-	}
+            produtoRepository.deleteById(codigo);
+        }
+    }
 
-	public void alterarNome(String nome, Long codigo) {
-		Optional<Produto> optionalProduto = produtoRepository.findById(codigo);
+    public void alterarNome(String nome, Long codigo) {
+        Optional<Produto> optionalProduto = produtoRepository.findById(codigo);
 
-		if (optionalProduto.isPresent()) {
-			Produto produto = optionalProduto.get();
-			produto.setNome(nome);
-			produtoRepository.save(produto);
-		}
-	}
+        if (optionalProduto.isPresent()) {
+            Produto produto = optionalProduto.get();
+            produto.setNome(nome);
+            produtoRepository.save(produto);
+        }
+    }
 
-	public Produto addCategoria(Long codigoProduto, Long codigoCategoria) {
-		Optional<Produto> optionalProduto = produtoRepository.findById(codigoProduto);
-		Optional<Categoria> optionalCategoria = categoriaRepository.findById(codigoCategoria);
+    public Produto addCategoria(Long codigoProduto, Long codigoCategoria) {
+        Optional<Produto> optionalProduto = produtoRepository.findById(codigoProduto);
+        Optional<Categoria> optionalCategoria = categoriaRepository.findById(codigoCategoria);
 
-		if (optionalProduto.isPresent() && optionalCategoria.isPresent()) {
-			Produto produto = optionalProduto.get();
-			Categoria categoria = optionalCategoria.get();
+        if (optionalProduto.isPresent() && optionalCategoria.isPresent()) {
+            Produto produto = optionalProduto.get();
+            Categoria categoria = optionalCategoria.get();
 
-			produto.setCategoria(categoria);
-			categoria.addProduto(produto);
+            produto.setCategoria(categoria);
+            categoria.addProduto(produto);
 
-			produtoRepository.save(produto);
-			categoriaRepository.save(categoria);
-		}
+            produtoRepository.save(produto);
+            categoriaRepository.save(categoria);
+        }
 
-		return optionalProduto.orElse(null);
-	}
+        return optionalProduto.orElse(null);
+    }
 
-	public Produto removeCategoria(Long codigo) {
-		Categoria categoria = codigo.getCategoria();
+    public Produto removeCategoria(Produto produto) {
+        Categoria categoria = produto.getCategoria();
 
-		if (categoria != null) {
-			codigo.setCategoria(null);
-			categoria.removeProduto(codigo);
+        if (categoria != null) {
+            produto.setCategoria(null);
+            categoria.removeProduto(produto);
 
-			produtoRepository.save(codigo);
-			categoriaRepository.save(categoria);
-		}
+            produtoRepository.save(produto);
+            categoriaRepository.save(categoria);
+        }
 
-		return codigo;
-	}
+        return produto;
+    }
 
-	public Produto addImagem(Long codigoProduto, String codigoImagem) {
-		Optional<Produto> optionalProduto = produtoRepository.findById(codigoProduto);
-		Optional<Imagem> optionalImagem = imagemRepository.findById(codigoImagem);
+    public Produto addImagem(Long codigoProduto, String codigoImagem) {
+        Optional<Produto> optionalProduto = produtoRepository.findById(codigoProduto);
+        Optional<Imagem> optionalImagem = imagemRepository.findById(codigoImagem);
 
-		if (optionalProduto.isPresent() && optionalImagem.isPresent()) {
-			Produto produto = optionalProduto.get();
-			Imagem imagem = optionalImagem.get();
+        if (optionalProduto.isPresent() && optionalImagem.isPresent()) {
+            Produto produto = optionalProduto.get();
+            Imagem imagem = optionalImagem.get();
 
-			produto.setImagem(imagem);
-			imagem.setProduto(produto);
+            produto.setImagem(imagem);
+            imagem.setProduto(produto);
 
-			produtoRepository.save(produto);
-			imagemRepository.save(imagem);
-		}
+            produtoRepository.save(produto);
+            imagemRepository.save(imagem);
+        }
 
-		return optionalProduto.orElse(null);
-	}
+        return optionalProduto.orElse(null);
+    }
 
-	public Produto removeImagem(Produto produto) {
-		String codigoImagem = produto.getIdImagem();
+    public Produto removeImagem(Produto produto) {
+        String codigoImagem = produto.getIdImagem();
 
-		if (!"Sem imagem".equals(codigoImagem)) {
-			produto.setImagem(null);
-			produtoRepository.save(produto);
-			imagemRepository.deleteById(codigoImagem);
-		}
+        if (!"Sem imagem".equals(codigoImagem)) {
+            produto.setImagem(null);
+            produtoRepository.save(produto);
+            imagemRepository.deleteById(codigoImagem);
+        }
 
-		return produto;
-	}
+        return produto;
+    }
 
-	public List<Produto> listarProdutosPrecoMaiorOuIgual1000() {
-		return produtoRepository.listarProdutosPrecoMaiorOuIgual1000();
-	}
+    public List<Produto> listarProdutosPrecoMaiorOuIgual1000() {
+        return produtoRepository.listarProdutosPrecoMaiorOuIgual1000();
+    }
 
-	public Long contarProdutosPrecoMaiorOuIgual1000() {
-		return produtoRepository.contarProdutosPrecoMaiorOuIgual1000();
-	}
+    public Long contarProdutosPrecoMaiorOuIgual1000() {
+        return produtoRepository.contarProdutosPrecoMaiorOuIgual1000();
+    }
 
-	public void removeImagem(Long codigoProduto) {
-	}
+    public void removeImagem(Long codigoProduto) {
+        Optional<Produto> optionalProduto = produtoRepository.findById(codigoProduto);
 
-	public List<Produto> listarProdutosCategoria(String string) {
-		return null;
-	}
+        if (optionalProduto.isPresent()) {
+            Produto produto = optionalProduto.get();
 
-	public Long contarProdutosCategoria(String string) {
-		return null;
-	}
+            if (!"Sem imagem".equals(produto.getIdImagem())) {
+                removeImagem(produto);
+            }
+        }
+    }
+
+    public List<Produto> listarProdutosCategoria(String nomeCategoria) {
+        return produtoRepository.listarProdutosCategoria(nomeCategoria);
+    }
+
+    public Long contarProdutosCategoria(String nomeCategoria) {
+        return produtoRepository.contarProdutosCategoria(nomeCategoria);
+    }
 }
